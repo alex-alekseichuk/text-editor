@@ -7,7 +7,17 @@
 #include "buffer_impl.h"
 
 Buffer *make_buffer() {
-    return malloc(sizeof(Buffer));
+    Buffer *buffer = malloc(sizeof(Buffer));
+
+    if (buffer != NULL)
+    {
+        buffer->lines = NULL;
+        buffer->len = 0;
+        buffer->size = 0;
+        buffer->file_path = NULL;
+    }
+
+    return buffer;
 }
 
 size_t buffer_get_len(Buffer *buffer) {
@@ -15,13 +25,13 @@ size_t buffer_get_len(Buffer *buffer) {
 }
 
 Line *buffer_get_line(Buffer *buffer, size_t i_line) {
-    if (i_line >= buffer->len)
+    if (i_line >= buffer->len || i_line < 0)
        return NULL;
     return buffer->lines[i_line];
 }
 
 char *buffer_line_text(Buffer *buffer, size_t i_line) {
-    if (i_line >= buffer->len)
+    if (i_line >= buffer->len || i_line < 0)
         return "";
     if (NULL == buffer->lines[i_line])
         return "";
@@ -29,7 +39,7 @@ char *buffer_line_text(Buffer *buffer, size_t i_line) {
 }
 
 int buffer_line_len(Buffer *buffer, size_t i_line) {
-    if (i_line >= buffer->len)
+    if (i_line >= buffer->len || i_line < 0)
         return 0;
     if (NULL == buffer->lines[i_line])
         return 0;

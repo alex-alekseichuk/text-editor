@@ -1,4 +1,7 @@
 cmake-build-debug
+build
+debug
+release
 .idea
 a.out
 1.txt

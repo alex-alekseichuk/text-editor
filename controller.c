@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include "buffer.h"
+#include "buffer/buffer.h"
 #include "view.h"
 
 #define CTRL(c) ((c) & 0x1f)

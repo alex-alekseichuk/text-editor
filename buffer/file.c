@@ -18,6 +18,10 @@ int buffer_open_file(Buffer *buffer, const char *file_path) {
                 fprintf(stderr, "Can't allocate memory for the buffer\n");
                 return 0;
             }
+
+            if (buffer->file_path) free(buffer->file_path);
+            buffer->file_path = strdup(file_path);
+
             return 1;
         }
         return 0;
@@ -32,7 +36,7 @@ int buffer_open_file(Buffer *buffer, const char *file_path) {
     ssize_t read;
 
     while ((read = getline(&str, &len, file)) != -1) {
-        buffer_add_line(buffer, str, read-1);
+        buffer_add_line(buffer, str, str[read - 1] == '\n' ? read-1 : read);
     }
 
     free(str);
@@ -57,7 +61,9 @@ int buffer_save_file(Buffer *buffer, const char *file_path) {
 
     for (int i = 0; i < buffer->len; i++) {
         fputs(buffer_line_text(buffer, i), file);
-        fputs("\n", file);
+        if (i < buffer->len - 1) {
+            fputs("\n", file);
+        }
     }
 
     fclose(file);

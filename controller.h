@@ -1,4 +1,4 @@
 #pragma once
-#include "buffer.h"
+#include "buffer/buffer.h"
 
 int ctrl_run(View *view, Buffer *_buffer);

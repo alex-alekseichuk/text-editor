@@ -1,11 +1,11 @@
 #include <ncurses.h>
 #include <locale.h>
-#include "buffer.h"
+#include "buffer/buffer.h"
 
 typedef struct View {
     int cols;
     int rows;
-    size_t top_line;
+    int top_line;
     int x, y;
     Buffer *buffer;
 } View;
@@ -61,7 +61,7 @@ void show_view(View *view) {
 void view_buffer(View *view, Buffer *buffer) {
     view->buffer = buffer;
 
-    view->top_line = 0;
+    view->top_line = buffer_get_len(buffer) > 0 ? 0 : -1;
     view->x = 0;
     view->y = 0;
 
@@ -151,7 +151,13 @@ void cmd_page_down(View *view) {
 }
 
 void cmd_insert_char(View *view, char ch) {
-    if (!line_insert_char(buffer_get_line(view->buffer, view->y + view->top_line), view->x, ch))
+    if (view->top_line == -1) {
+        buffer_add_line(view->buffer, "", 0);
+        view->top_line = 0;
+    }
+    Line *line = buffer_get_line(view->buffer, view->y + view->top_line);
+    if (line == NULL) return;
+    if (!line_insert_char(line, view->x, ch))
     {
         return;
     }
@@ -171,7 +177,9 @@ void cmd_delete_char(View *view) {
         show_view(view);
         return;
     }
-    if (!line_delete_char(buffer_get_line(view->buffer, view->y + view->top_line), view->x)) return;
+    Line *line = buffer_get_line(view->buffer, view->y + view->top_line);
+    if (line == NULL) return;
+    if (!line_delete_char(line, view->x)) return;
     
     clear_line(view->y);
     show_line(view, view->y);
@@ -180,7 +188,7 @@ void cmd_delete_char(View *view) {
 
 void cmd_backspace_char(View *view) {
     if (view->x == 0) {
-        if (view->y + view->top_line == 0) return;
+        if (view->y + view->top_line <= 0) return;
         int new_x = buffer_join_lines(view->buffer, view->y + view->top_line - 1);
         if (new_x == -1) return;
 
@@ -189,7 +197,9 @@ void cmd_backspace_char(View *view) {
         show_view(view);
         return;
     }
-    if (!line_backspace_char(buffer_get_line(view->buffer, view->y + view->top_line), view->x)) return;
+    Line *line = buffer_get_line(view->buffer, view->y + view->top_line);
+    if (line == NULL) return;
+    if (!line_backspace_char(line, view->x)) return;
 
     clear_line(view->y);
     show_line(view, view->y);
@@ -198,6 +208,10 @@ void cmd_backspace_char(View *view) {
 }
 
 void cmd_enter(View *view) {
+    if (view->top_line == -1) {
+        buffer_add_line(view->buffer, "", 0);
+        view->top_line = 0;
+    }
     if (!buffer_split_line(view->buffer, view->y + view->top_line, view->x)) return;
 
     if (view->y == view->rows - 1) view->top_line++; else view->y++;

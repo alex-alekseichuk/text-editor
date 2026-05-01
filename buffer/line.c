@@ -1,8 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <locale.h>
-#include <signal.h>
 #include <string.h>
 #include "line.h"
 
@@ -13,7 +10,12 @@ typedef struct Line {
 } Line;
 
 Line *make_line() {
-    return malloc(sizeof(Line));
+    Line *line = (Line *)malloc(sizeof(Line));
+    if (line == NULL) return NULL;
+    line->str = NULL;
+    line->len = 0;
+    line->size = 0;
+    return line;
 }
 
 size_t line_get_len(Line *line) {
@@ -125,6 +127,7 @@ int line_insert_char(Line *line, int pos, char ch) {
 }
 
 int line_delete_char(Line *line, int pos) {
+    if (line == NULL) return 0;
     if (line->len == 0 || pos >= line->len) return 0;
     if (pos < line->len - 1)
         memmove(&line->str[pos], &line->str[pos + 1], line->len - pos - 1);
@@ -134,6 +137,7 @@ int line_delete_char(Line *line, int pos) {
 }
 
 int line_backspace_char(Line *line, int pos) {
+    if (line == NULL) return 0;
     if (pos == 0 || pos > line->len) return 0;
     if (pos < line->len)
         memmove(&line->str[pos-1], &line->str[pos], line->len - pos);

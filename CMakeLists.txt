@@ -6,11 +6,12 @@ set(CMAKE_C_STANDARD 11)
 include_directories(.)
 
 add_executable(text_editor
-        buffer.c
+        buffer/buffer.c
+        buffer/file.c
+        buffer/line.c
+        view.c
         controller.c
-        file.c
-        line.c
         main.c
-        view.c)
+)
 
 target_link_libraries(text_editor ncurses tinfo)

@@ -1,10 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <locale.h>
 #include <signal.h>
 #include <string.h>
-#include "buffer.h"
+#include "buffer/buffer.h"
 #include "view.h"
 #include "controller.h"
 
