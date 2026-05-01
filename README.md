@@ -5,7 +5,7 @@ TUI text editor based on ncurses.
 ## Build
 
 ```bash
-gcc main.c buffer.c line.c file.c view.c controller.c -lncurses -ltinfo -o text-editor
+gcc main.c buffer/buffer.c buffer/line.c buffer/file.c view.c controller.c -lncurses -ltinfo -o text-editor
 ```
 
 ## Run
