@@ -5,7 +5,16 @@ TUI text editor based on ncurses.
 ## Build
 
 ```bash
-gcc main.c buffer/buffer.c buffer/line.c buffer/file.c view.c controller.c -lncurses -ltinfo -o text-editor
+mkdir build
+cd build
+cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+```
+
+Or by hand:
+```bash
+gcc main.c buffer/buffer.c buffer/line.c buffer/file.c view.c controller.c \
+  -lncurses -ltinfo -o text-editor
 ```
 
 ## Run
