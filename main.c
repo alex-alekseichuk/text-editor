@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
+#include <unistd.h>
+
 #include "buffer/buffer.h"
 #include "view.h"
 #include "controller.h"
@@ -19,10 +21,15 @@ void exit_app() {
 }
 
 void sigint_handler(int signum) {
-    exit_app();
+    ctrl_stop();
 }
 
 int main(int argc, char *argv[]) {
+    if (!isatty(STDIN_FILENO)) {
+        fprintf(stderr, "Editor requires an interactive terminal\n");
+        return 1;
+    }
+
     signal(SIGINT, sigint_handler);
     signal(SIGTERM, sigint_handler);
     signal(SIGQUIT, sigint_handler);
@@ -46,6 +53,10 @@ int main(int argc, char *argv[]) {
     }
 
     view = make_view();
+    if (view == NULL) {
+        fprintf(stderr, "Can't allocate memory for the view\n");
+        return EXIT_FAILURE;
+    }
     view_init(view);
     view_buffer(view, buffer);
 

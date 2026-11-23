@@ -4,6 +4,17 @@
 #include <string.h>
 #include "buffer_impl.h"
 
+char *str_dup(const char *src)
+{
+    size_t len = strlen(src) + 1;
+    char *dst = malloc(len);
+
+    if (dst)
+        memcpy(dst, src, len);
+
+    return dst;
+}
+
 int buffer_open_file(Buffer *buffer, const char *file_path) {
     if (!file_path) return 0;
 
@@ -20,7 +31,7 @@ int buffer_open_file(Buffer *buffer, const char *file_path) {
             }
 
             if (buffer->file_path) free(buffer->file_path);
-            buffer->file_path = strdup(file_path);
+            buffer->file_path = str_dup(file_path);
 
             return 1;
         }
@@ -43,7 +54,7 @@ int buffer_open_file(Buffer *buffer, const char *file_path) {
     fclose(file);
 
     if (buffer->file_path) free(buffer->file_path);
-    buffer->file_path = strdup(file_path);
+    buffer->file_path = str_dup(file_path);
 
     return 1;
 }

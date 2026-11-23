@@ -1,15 +1,32 @@
 #include <ncurses.h>
+#include <signal.h>
+#include <unistd.h>
+#include <poll.h>
+
 #include "buffer/buffer.h"
 #include "view.h"
 
 #define CTRL(c) ((c) & 0x1f)
 
+static sig_atomic_t should_stop = 0;
+
+void ctrl_stop() {
+    should_stop = 1;
+}
+
 int ctrl_run(View *view, Buffer *buffer) {
+    should_stop = false;
+
     keypad(stdscr, TRUE);
     set_escdelay(25);
 
+    timeout(100);
+
     int key;
-    while(key = getch()) {
+    while(!should_stop && (key = getch())) {
+        if (key == ERR) {
+            continue;
+        }
         if (key == KEY_F(10) || key == 27) {
             break;
         }
