@@ -1,7 +1,5 @@
 #include <ncurses.h>
 #include <signal.h>
-#include <unistd.h>
-#include <poll.h>
 
 #include "buffer/buffer.h"
 #include "view.h"
@@ -20,7 +18,7 @@ int ctrl_run(View *view, Buffer *buffer) {
     keypad(stdscr, TRUE);
     set_escdelay(25);
 
-    timeout(100);
+    timeout(200);
 
     int key;
     while(!should_stop && (key = getch())) {

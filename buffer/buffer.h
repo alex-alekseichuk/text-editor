@@ -9,8 +9,8 @@ void buffer_close(Buffer *buffer);
 int buffer_resize(Buffer *buffer, size_t new_size);
 
 int buffer_add_line(Buffer *buffer, char *str, size_t read);
-int buffer_join_lines(Buffer *buffer, int i_line);
-int buffer_split_line(Buffer *buffer, int i_line, int pos);
+int buffer_join_lines(Buffer *buffer, size_t i_line);
+int buffer_split_line(Buffer *buffer, size_t i_line, size_t pos);
 
 int buffer_open_file(Buffer *buffer, const char *file_path);
 int buffer_save_file(Buffer *buffer, const char *file_path);

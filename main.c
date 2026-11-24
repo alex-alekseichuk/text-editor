@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-#include <string.h>
 #include <unistd.h>
 
 #include "buffer/buffer.h"
@@ -11,16 +10,8 @@
 static Buffer *buffer = NULL;
 static View *view = NULL;
 
-void exit_app() {
-    if (buffer != NULL)
-        buffer_close(buffer);
-    if (view != NULL)
-        exit(view_close(view));
-    else
-        exit(EXIT_SUCCESS);
-}
-
 void sigint_handler(int signum) {
+    (void)signum;
     ctrl_stop();
 }
 
@@ -60,8 +51,15 @@ int main(int argc, char *argv[]) {
     view_init(view);
     view_buffer(view, buffer);
 
-    int result = ctrl_run(view, buffer);
+    ctrl_run(view, buffer);
 
-    exit_app();
-    return result;
+    buffer_close(buffer);
+    free(buffer);
+    buffer = NULL;
+
+    view_close(view);
+    free(view);
+    view = NULL;
+
+    return EXIT_SUCCESS;
 }

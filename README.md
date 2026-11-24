@@ -61,3 +61,16 @@ both the model (buffer) and the view components encapsulate their internal data 
 - no line numbers
 - no column mode
 - no block mode
+
+## Issues
+
+- Save failures are completely silent — buffer/file.c:51 + controller.c:19
+   buffer_save_file ignores fopen/fputs/fclose failures, and the caller ignores its return value with no status message. (Reproduced): open a read-only file, type a character, press Ctrl+S — no feedback at all, the file is unchanged, but the screen looks normal. That's a quiet data-loss trap.
+- CRLF lines are mangled — buffer/file.c:39
+   str[read-1] == '\n' ? read-1 : read strips the \n but leaves the \r. (Reproduced): a Windows file a\r\nb\r\n loads as a^M, b^M and is saved back with mixed endings.
+
+### Code-quality / latent issues
+
+- No SIGWINCH/resize handling — rows/cols are captured once in view_init; resizing the terminal leaves the view stale.
+- ESC quits without confirmation (controller.c:13), discarding unsaved changes; and since a bare 27 also results from any unrecognized escape sequence, a key with bad terminfo support can accidentally quit the editor.
+- fprintf(stderr, ...) inside buffer functions (OOM paths) prints directly to the terminal while ncurses owns it, corrupting the screen.

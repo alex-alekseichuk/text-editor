@@ -1,8 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <locale.h>
-#include <signal.h>
 #include <string.h>
 #include "buffer_impl.h"
 
@@ -25,13 +22,13 @@ size_t buffer_get_len(Buffer *buffer) {
 }
 
 Line *buffer_get_line(Buffer *buffer, size_t i_line) {
-    if (i_line >= buffer->len || i_line < 0)
+    if (i_line >= buffer->len)
        return NULL;
     return buffer->lines[i_line];
 }
 
 char *buffer_line_text(Buffer *buffer, size_t i_line) {
-    if (i_line >= buffer->len || i_line < 0)
+    if (i_line >= buffer->len)
         return "";
     if (NULL == buffer->lines[i_line])
         return "";
@@ -39,7 +36,7 @@ char *buffer_line_text(Buffer *buffer, size_t i_line) {
 }
 
 int buffer_line_len(Buffer *buffer, size_t i_line) {
-    if (i_line >= buffer->len || i_line < 0)
+    if (i_line >= buffer->len)
         return 0;
     if (NULL == buffer->lines[i_line])
         return 0;
@@ -123,7 +120,7 @@ int buffer_add_line(Buffer *buffer, char *str, size_t read) {
     return 1;
 }
 
-int buffer_join_lines(Buffer *buffer, int i_line) {
+int buffer_join_lines(Buffer *buffer, size_t i_line) {
     if (i_line >= buffer->len - 1) return -1;
     int new_x = line_get_len(buffer->lines[i_line]);
     line_cat(buffer->lines[i_line], line_get_str(buffer->lines[i_line + 1]));
@@ -139,7 +136,9 @@ int buffer_join_lines(Buffer *buffer, int i_line) {
     return new_x;
 }
 
-int buffer_split_line(Buffer *buffer, int i_line, int pos) {
+int buffer_split_line(Buffer *buffer, size_t i_line, size_t pos) {
+    if (i_line >= buffer->len) return 0;
+
     while (buffer->len >= buffer->size) {
         if (!buffer_resize(buffer, 0)) {
             fprintf(stderr, "Can't allocate memory for the buffer\n");

@@ -86,7 +86,7 @@ int line_resize(Line *line, size_t new_size) {
         if (line->size >= new_size)
             return 1;
         prev_size = line->size;
-        new_size = new_size;
+        // new_size = new_size;
     }
     if (is_realloc) {
         void *tmp = realloc(line->str, new_size + 1);
@@ -118,6 +118,8 @@ int line_insert_char(Line *line, int pos, char ch) {
 
     if (pos < line->len) {
         memmove(&line->str[pos + 1], &line->str[pos], line->len - pos);
+    } else {
+        line->str[pos+1] = '\0';
     }
 
     line->str[pos] = ch;

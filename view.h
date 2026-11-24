@@ -1,5 +1,7 @@
 #pragma once
 
+#include "buffer/buffer.h"
+
 typedef struct View View;
 
 View *make_view();

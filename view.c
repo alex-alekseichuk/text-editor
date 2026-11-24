@@ -3,10 +3,10 @@
 #include "buffer/buffer.h"
 
 typedef struct View {
-    int cols;
-    int rows;
+    size_t cols;
+    size_t rows;
     int top_line;
-    int x, y;
+    size_t x, y;
     Buffer *buffer;
 } View;
 
@@ -188,8 +188,9 @@ void cmd_delete_char(View *view) {
 
 void cmd_backspace_char(View *view) {
     if (view->x == 0) {
-        if (view->y + view->top_line <= 0) return;
-        int new_x = buffer_join_lines(view->buffer, view->y + view->top_line - 1);
+        long cur_line = (long)view->y + view->top_line;
+        if (cur_line <= 0) return;
+        int new_x = buffer_join_lines(view->buffer, (size_t)(cur_line - 1));
         if (new_x == -1) return;
 
         view->x = new_x;
